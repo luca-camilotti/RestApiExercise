@@ -2,6 +2,7 @@ package luke.net.jersey.yes;
 
 import javax.ws.rs.core.*;
 
+import luke.net.jersey.auth.Secured;
 import luke.net.jersey.filter.MyApiException;
 
 import javax.ws.rs.*;
@@ -34,7 +35,7 @@ public class JerseyDatabase {
 	}
 	
 	/* Ricerca per filiale o per ruolo 
-	 * Essempio: http://localhost:8080/JerseyJson/dbazienda/dipendente/funzione/manager
+	 * Esempio: http://localhost:8080/JerseyJson/dbazienda/dipendente/funzione/manager
 	 * */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -85,12 +86,32 @@ public class JerseyDatabase {
 		dbHelper.close();
 		
 	}
-	/* This method generates an exception to test the Exception Handler */
+	/* This method generates an exception to test the Exception Handler 
+	 * http://localhost:8080/JerseyJson/dbazienda/error
+	 * */
 	@GET
 	@Path("error")    
 	@Produces(MediaType.APPLICATION_JSON)
 	public employee[] error() throws Exception {		
 		throw new MyApiException("Test Server Error Response");  // testing exception handler
+	}
+	
+	/* This method tests AuthenticationFilter with JWT.
+	 * Put @Secured decoration to restrict access to authenticated
+	 * requests (must send Authorization: Bearer <token> header
+	 * in the request) 
+	 * http://localhost:8080/JerseyJson/dbazienda/secured
+	 * */
+	@Secured
+	@GET
+	@Path("secured")    
+	@Produces(MediaType.APPLICATION_JSON)
+	public employee[] securedexample() throws Exception {		
+		employee[] array = null;
+		dbHelper.connect();
+		array = dbHelper.query(dbHelper.queryAllDipendente);
+		dbHelper.close();
+		return array;
 	}
 
 }
