@@ -1,6 +1,9 @@
 package luke.net.jersey.yes;
 
 import javax.ws.rs.core.*;
+
+import luke.net.jersey.filter.MyApiException;
+
 import javax.ws.rs.*;
 
 /*
@@ -30,7 +33,9 @@ public class JerseyDatabase {
 		return array;	
 	}
 	
-	/* Ricerca per filiale o per ruolo */
+	/* Ricerca per filiale o per ruolo 
+	 * Essempio: http://localhost:8080/JerseyJson/dbazienda/dipendente/funzione/manager
+	 * */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("dipendente/{campo}/{valore}")
@@ -79,6 +84,13 @@ public class JerseyDatabase {
 		dbHelper.execute(cmdInsert);
 		dbHelper.close();
 		
+	}
+	/* This method generates an exception to test the Exception Handler */
+	@GET
+	@Path("error")    
+	@Produces(MediaType.APPLICATION_JSON)
+	public employee[] error() throws Exception {		
+		throw new MyApiException("Test Server Error Response");  // testing exception handler
 	}
 
 }
